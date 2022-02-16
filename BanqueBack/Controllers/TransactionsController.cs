@@ -100,6 +100,59 @@ namespace BanqueBack.Controllers
             return NoContent();
         }
 
+        [HttpGet("bydates/{date1}/{date2}")]
+        public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactionsByDates(DateTime date1, DateTime date2)
+        {
+            //var numAccount = 4;
+            //var sql = string.Format("SELECT * From \"Transaction\" Where \"accountid\" = {0}", numAccount);
+            //var accounts = await _context.Transactions.FromSqlRaw(sql).ToListAsync();
+
+            var accounts = await _context.Transactions
+                                      .Where(s => s.Date >= date1)
+                                      .Where(s => s.Date <= date2)
+                                      .OrderByDescending(s => s.Date)
+                                      .ToListAsync();
+
+            return accounts;
+        }
+
+        [HttpGet("byType/{type}")]
+        public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactionsByOperation(string type)
+        {
+            var accounts = await _context.Transactions
+                                      .Where(s => s.Operation == type)
+                                      .OrderByDescending(s => s.Date)
+                                      .ToListAsync();
+
+            return accounts;
+        }
+
+        [HttpGet("byCredit")]
+        public async Task<ActionResult<IEnumerable<Result>>> GetTransactionsByCredit()
+        {
+            var accounts = await _context.Transactions
+                                      .Where(s => s.Operation == "credit")
+                                      .GroupBy(x => x.Description)                                  
+                                      .Select(x => new Result { Amount = x.Sum(b => b.Montant), Name = x.Key })
+                                      .OrderByDescending(x => x.Amount)
+                                      .ToListAsync();
+
+            return accounts;
+        }
+
+        [HttpGet("byDebit")]
+        public async Task<ActionResult<IEnumerable<Result>>> GetTransactionsByDebit()
+        {
+            var accounts = await _context.Transactions
+                                      .Where(s => s.Operation == "debit")
+                                      .GroupBy(x => x.Description)
+                                      .Select(x => new Result { Amount = x.Sum(b => b.Montant), Name = x.Key })
+                                      .OrderByDescending(x => x.Amount)
+                                      .ToListAsync();
+
+            return accounts;
+        }
+
         private bool TransactionExists(int id)
         {
             return _context.Transactions.Any(e => e.Transactionid == id);

@@ -50,11 +50,11 @@ namespace BanqueBack.Models
                 entity.Property(e => e.Agenceid).HasColumnName("agenceid");
 
                 entity.Property(e => e.Datecloture)
-                    .HasColumnType("time with time zone")
+                    .HasColumnType("timestamp with time zone")
                     .HasColumnName("datecloture");
 
                 entity.Property(e => e.Datecreation)
-                    .HasColumnType("time with time zone")
+                    .HasColumnType("timestamp with time zone")
                     .HasColumnName("datecreation");
 
                 entity.Property(e => e.Numaccount)
@@ -117,7 +117,7 @@ namespace BanqueBack.Models
                 entity.Property(e => e.Accountid).HasColumnName("accountid");
 
                 entity.Property(e => e.Date)
-                    .HasColumnType("time with time zone")
+                    .HasColumnType("timestamp with time zone")
                     .HasColumnName("date");
 
                 entity.Property(e => e.Description)
@@ -159,7 +159,7 @@ namespace BanqueBack.Models
                     .HasColumnName("cp");
 
                 entity.Property(e => e.Datenaissance)
-                    .HasColumnType("time with time zone")
+                    .HasColumnType("timestamp with time zone")
                     .HasColumnName("datenaissance");
 
                 entity.Property(e => e.Email)

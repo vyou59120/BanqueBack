@@ -1,3 +1,4 @@
+user
 {
   "nom": "YOU",
   "prenom": "Van-Rottana",
@@ -7,15 +8,17 @@
   "email": "van@hotmail.fr",
   "motdepasse": "baba",
   "role": "ADMIN",
-  "datenaissance": "2022-02-15T21:15:12.694Z"
+  "datenaissance": "1982-02-15T21:15:12.694Z"
 }
 
+agence
 {
   "nomagence": "SYC LILLE",
   "phone": "0772727272",
   "ville": "LILLE"
 }
 
+account
 {
   "numaccount": "123456789",
   "agenceid": 1,
@@ -27,38 +30,10 @@
     "agenceid": 0,
     "nomagence": "string",
     "phone": "string",
-    "ville": "string",
-    "accounts": [
-      "string"
-    ]
-  },
-  "user": {
-    "userid": 0,
-    "nom": "string",
-    "prenom": "string",
-    "adresse": "string",
-    "cp": "string",
-    "ville": "string",
-    "email": "string",
-    "motdepasse": "string",
-    "role": "string",
-    "datenaissance": "2022-02-15T20:29:36.048Z",
-    "accounts": [
-      "string"
-    ]
-  },
-  "transaction": [
-    {
-      "accountid": 0,
-      "date": "2022-02-15T20:29:36.048Z",
-      "montant": 0,
-      "operation": "string",
-      "description": "string",
-      "account": "string"
-    }
-  ]
+    "ville": "string"
 }
 
+transaction
 {
   "date": "2022-02-15T20:50:14.766Z",
   "montant": 100,
