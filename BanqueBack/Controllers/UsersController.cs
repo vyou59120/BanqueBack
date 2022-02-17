@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BanqueBack.Models;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using System.Text;
 
 namespace BanqueBack.Controllers
 {
@@ -19,6 +23,18 @@ namespace BanqueBack.Controllers
         public UsersController(BanqueContext context)
         {
             _context = context;
+        }
+
+        [HttpPost("authenticate")]
+        public AuthenticateResponse Authenticate(AuthenticateRequest model)
+        {
+            var user = _context.Users.SingleOrDefault(x => x.Email == model.Email && x.Motdepasse == Common.Secure.Encrypteur(model.Motdepasse));
+
+            if (user == null) return null;
+
+            var token = generateJwtToken(user);
+
+            return new AuthenticateResponse(user, token);
         }
 
         // GET: api/Users
@@ -52,7 +68,9 @@ namespace BanqueBack.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(user).State = EntityState.Modified;
+            User temp = new User(user.Userid, user.Nom, user.Prenom, user.Adresse, user.Cp, user.Ville, user.Email, Common.Secure.Encrypteur(user.Motdepasse), user.Role, user.Datenaissance);
+
+            _context.Users.Update(temp);
 
             try
             {
@@ -78,7 +96,9 @@ namespace BanqueBack.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
-            _context.Users.Add(user);
+            User temp = new User(user.Userid, user.Nom, user.Prenom, user.Adresse, user.Cp, user.Ville, user.Email, Common.Secure.Encrypteur(user.Motdepasse), user.Role, user.Datenaissance);
+
+            _context.Users.Add(temp);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetUser", new { id = user.Userid }, user);
@@ -98,6 +118,22 @@ namespace BanqueBack.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        private string generateJwtToken(User user)
+        {
+            // generate token that is valid for 7 days
+            var tokenHandler = new JwtSecurityTokenHandler();
+            //var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var key = Encoding.ASCII.GetBytes("blablavlkfdqjlkvndsjkfnbsdlkbnlkdqfnfbkjnslkdvnkjdqnkbjndsfkj");
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[] { new Claim("id", user.Userid.ToString()) }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
 
         private bool UserExists(int id)

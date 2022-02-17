@@ -25,7 +25,9 @@ namespace BanqueBack.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactions()
         {
-            return await _context.Transactions.ToListAsync();
+            return await _context.Transactions
+                .OrderByDescending(s => s.Date)
+                .ToListAsync();
         }
 
         // GET: api/Transactions/5
@@ -127,13 +129,36 @@ namespace BanqueBack.Controllers
             return accounts;
         }
 
+        [HttpGet("byMonth")]
+        public async Task<List<Couple>> GetTransactionsByMonth()
+        {
+            //var accounts = await _context.Transactions
+            //                          .Where(s => s.Operation == "credit")
+            //                          .GroupBy(x => new { x.Description, x.Date })                                  
+            //                          //.Select(y => new Result { Amount = y.Sum(b => b.Montant), Name = y.DateOpe })
+            //                          //.OrderByDescending(x => x.DateOpe)
+            //                          .ToListAsync();
+
+            var query = await (from t in _context.Transactions
+                               group t by new { t.Operation, t.Date }
+             into grp
+                               select new Couple
+                               {
+                                   Operation = grp.Key.Operation,
+                                   Date = grp.Key.Date,
+                                   Montant = grp.Sum(t => t.Montant)
+                               }).ToListAsync();
+
+            return query;
+        }
+
         [HttpGet("byCredit")]
         public async Task<ActionResult<IEnumerable<Result>>> GetTransactionsByCredit()
         {
             var accounts = await _context.Transactions
                                       .Where(s => s.Operation == "credit")
-                                      .GroupBy(x => x.Description)                                  
-                                      .Select(x => new Result { Amount = x.Sum(b => b.Montant), Name = x.Key })
+                                      .GroupBy(x => x.Description)
+                                      .Select(y => new Result { Amount = y.Sum(b => b.Montant), Name = y.Key })
                                       .OrderByDescending(x => x.Amount)
                                       .ToListAsync();
 
