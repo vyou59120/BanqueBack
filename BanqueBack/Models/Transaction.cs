@@ -7,7 +7,7 @@ namespace BanqueBack.Models
     {
         public int Transactionid { get; set; }
         public int Accountid { get; set; }
-        public DateTimeOffset? Date { get; set; }
+        public DateTime? Date { get; set; }
         public decimal? Montant { get; set; }
         public string? Operation { get; set; } = null!;
         public string? Description { get; set; } = null!;
