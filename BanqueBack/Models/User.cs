@@ -29,11 +29,13 @@ namespace BanqueBack.Models
             Userid = userid;
             Nom = nom;
             Prenom = prenom;
+            Adresse = adresse;
             Cp = cp;
             Ville = ville;
             Email = email;
             Motdepasse = motdepasse;
             Role = role;
+            Datenaissance = datenaissance;
         }
     }
 }

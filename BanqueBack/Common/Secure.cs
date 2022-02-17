@@ -1,27 +1,27 @@
-﻿using System.Text;
+﻿using System.Security.Cryptography;
+using System.Text;
 
 namespace BanqueBack.Common
 {
     public class Secure
     {
-        public static string Key = "Saucisse";
-
         public static string Encrypteur(string password)
         {
-            if (string.IsNullOrEmpty(password)) return "";
+            StringBuilder stringBuilder = new StringBuilder();
 
-            password += Key;
-            var passwordBytes = Encoding.UTF8.GetBytes(password);
-            return Convert.ToBase64String(passwordBytes);
+            using (SHA256 hash = SHA256.Create())
+            {
+                Encoding encoding = Encoding.UTF8;
+                Byte[] result = hash.ComputeHash(encoding.GetBytes(password));
+
+                for (int i = 0; i < result.Length; i++)
+                {
+                    stringBuilder.Append(result[i].ToString("x2"));
+                }
+            }
+            Console.WriteLine(stringBuilder.ToString());
+            return stringBuilder.ToString();
         }
 
-        public static string Decrypteur(string cryptedPassword)
-        {
-            if (string.IsNullOrEmpty(cryptedPassword)) return "";
-            var cryptedPasswordByte = Convert.FromBase64String(cryptedPassword);
-            var result = Encoding.UTF8.GetString(cryptedPasswordByte);
-            result = result.Substring(0, result.Length - Key.Length);
-            return result;
-        }
     }
 }
