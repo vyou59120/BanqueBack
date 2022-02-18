@@ -130,26 +130,24 @@ namespace BanqueBack.Controllers
         }
 
         [HttpGet("byMonth")]
-        public async Task<List<Couple>> GetTransactionsByMonth()
+        public async Task<ActionResult<IEnumerable<Couple>>> GetTransactionsByMonth()
         {
-            //var accounts = await _context.Transactions
-            //                          .Where(s => s.Operation == "credit")
-            //                          .GroupBy(x => new { x.Description, x.Date })                                  
-            //                          //.Select(y => new Result { Amount = y.Sum(b => b.Montant), Name = y.DateOpe })
-            //                          //.OrderByDescending(x => x.DateOpe)
-            //                          .ToListAsync();
 
-            var query = await (from t in _context.Transactions
-                               group t by new { t.Operation, t.Date }
-             into grp
-                               select new Couple
-                               {
-                                   Operation = grp.Key.Operation,
-                                   Date = grp.Key.Date,
-                                   Montant = grp.Sum(t => t.Montant)
-                               }).ToListAsync();
+            var grouped = await (from p in _context.Transactions
+                                 .Where(p => p.Date < DateTime.Now)                   
+                                 .Where(p => p.Date.Value.AddMonths(6) > DateTime.Now)
+                                 group p by new { ope = p.Operation, month = p.Date.Value.Month }
+                                 into grp
+                                 select new Couple
+                                 {
+                                     Operation = grp.Key.ope,
+                                     Month = grp.Key.month,
+                                     Montant = grp.Sum(t => t.Montant)
+                                 })
+                                 .OrderByDescending(x => x.Month)
+                                 .ToListAsync();
 
-            return query;
+            return grouped;
         }
 
         [HttpGet("byCredit")]
