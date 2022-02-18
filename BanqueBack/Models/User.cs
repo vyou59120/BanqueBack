@@ -24,16 +24,20 @@ namespace BanqueBack.Models
         public virtual ICollection<Account>? Accounts { get; set; }
 
         public User(int userid, string nom, string prenom, string adresse, 
-            string cp, string ville, string email, string motdepasse, string role, DateTime? datenaissance)
+            string cp, string ville, string email, string motdepasse, 
+            string role, DateTime? datenaissance)
         {
             Userid = userid;
             Nom = nom;
             Prenom = prenom;
+            Adresse = adresse;
             Cp = cp;
             Ville = ville;
             Email = email;
             Motdepasse = motdepasse;
             Role = role;
+            Datenaissance = datenaissance;
+
         }
     }
 }

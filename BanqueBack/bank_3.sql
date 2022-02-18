@@ -11,7 +11,7 @@ CREATE TABLE "User"
  Email         varchar(50) NOT NULL,
  MotDePasse    varchar(50) NOT NULL,
  Role          varchar(50) NOT NULL,
- DateNaissance time with time zone NOT NULL,
+ DateNaissance timestamp with time zone NOT NULL,
  CONSTRAINT PK_Customer PRIMARY KEY ( UserId ),
  CONSTRAINT AK1_Customer_CustomerName UNIQUE ( Nom )
 );
@@ -38,9 +38,9 @@ CREATE TABLE "Account"
  NumAccount   varchar(50) NULL,
  AgenceId     integer NOT NULL,
  UserId       integer NOT NULL,
- DateCreation time with time zone NOT NULL,
+ DateCreation timestamp with time zone NOT NULL,
  Solde        decimal(12,2) NOT NULL,
- DateCloture  time with time zone NOT NULL,
+ DateCloture  timestamp with time zone NOT NULL,
  CONSTRAINT PK_Order PRIMARY KEY ( AccountId ),
  CONSTRAINT AK1_Order_OrderNumber UNIQUE ( NumAccount ),
  CONSTRAINT FK_142 FOREIGN KEY ( AgenceId ) REFERENCES "Agence" ( AgenceId ),
@@ -64,7 +64,7 @@ CREATE TABLE "Transaction"
  start 1
  ),
  AccountId   integer NOT NULL,
- Date        time with time zone NOT NULL,
+ Date        timestamp with time zone NOT NULL,
  Montant     decimal(18,2) NOT NULL,
  Operation   varchar(50) NOT NULL,
  description varchar(50) NOT NULL,

@@ -143,8 +143,7 @@ namespace BanqueBack.Models
             {
                 entity.ToTable("User");
 
-                entity.HasIndex(e => e.Nom, "ak1_customer_customername")
-                    .IsUnique();
+                entity.HasIndex(e => e.Nom, "ak1_customer_customername");
 
                 entity.Property(e => e.Userid)
                     .HasColumnName("userid")
