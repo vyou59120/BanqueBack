@@ -11,6 +11,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
+using BanqueBack.Helpers;
 
 namespace BanqueBack.Controllers
 {
@@ -39,6 +40,7 @@ namespace BanqueBack.Controllers
 
         // GET: api/Users
         [HttpGet]
+        [Authorize("ADMIN", "COMMERCIAL")]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             return await _context.Users.ToListAsync();
@@ -49,6 +51,36 @@ namespace BanqueBack.Controllers
         public async Task<ActionResult<User>> GetUser(int id)
         {
             var user = await _context.Users.FindAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return user;
+        }
+
+        [HttpGet("email/{email}")]
+        public AuthenticateResponse GetUserByEmail(string email)
+        {
+            var user = _context.Users.SingleOrDefault(x => x.Email == email);
+
+            if (user == null) return null;
+
+            var token = generateJwtToken(user);
+
+            Console.WriteLine(user.Nom);
+
+            return new AuthenticateResponse(user, token);
+        }
+
+        [HttpGet("{id}/accounts")]
+        public async Task<ActionResult<IEnumerable<User>>> GetUserAccounts(int id)
+        {
+            var user = await _context.Users
+                       .Where(s => s.Userid == id)
+                       .Include(s => s.Accounts)
+                       .ToListAsync();
 
             if (user == null)
             {

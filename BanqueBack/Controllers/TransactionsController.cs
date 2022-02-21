@@ -155,6 +155,8 @@ namespace BanqueBack.Controllers
         {
             var accounts = await _context.Transactions
                                       .Where(s => s.Operation == "credit")
+                                      .Where(p => p.Date < DateTime.Now)
+                                      .Where(p => p.Date.Value.AddMonths(6) > DateTime.Now)
                                       .GroupBy(x => x.Description)
                                       .Select(y => new Result { Amount = y.Sum(b => b.Montant), Name = y.Key })
                                       .OrderByDescending(x => x.Amount)
@@ -168,6 +170,8 @@ namespace BanqueBack.Controllers
         {
             var accounts = await _context.Transactions
                                       .Where(s => s.Operation == "debit")
+                                      .Where(p => p.Date < DateTime.Now)
+                                      .Where(p => p.Date.Value.AddMonths(6) > DateTime.Now)
                                       .GroupBy(x => x.Description)
                                       .Select(x => new Result { Amount = x.Sum(b => b.Montant), Name = x.Key })
                                       .OrderByDescending(x => x.Amount)
@@ -175,6 +179,7 @@ namespace BanqueBack.Controllers
 
             return accounts;
         }
+
 
         private bool TransactionExists(int id)
         {

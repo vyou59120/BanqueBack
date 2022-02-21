@@ -55,3 +55,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+//Scaffold-DbContext "Server=localhost;Port=5432;Database=Banque;User Id=postgres;Password=root" Npgsql.EntityFrameworkCore.PostgreSQL -OutputDir Models

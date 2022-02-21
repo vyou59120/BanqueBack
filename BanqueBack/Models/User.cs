@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace BanqueBack.Models
 {
@@ -17,6 +18,8 @@ namespace BanqueBack.Models
         public string? Cp { get; set; } = null!;
         public string? Ville { get; set; } = null!;
         public string? Email { get; set; } = null!;
+
+        [JsonIgnore]
         public string? Motdepasse { get; set; } = null!;
         public string? Role { get; set; } = null!;
         public DateTime? Datenaissance { get; set; }

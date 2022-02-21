@@ -18,17 +18,18 @@ namespace BanqueBack.Models
 
         public virtual DbSet<Account> Accounts { get; set; } = null!;
         public virtual DbSet<Agence> Agences { get; set; } = null!;
+        public virtual DbSet<Login> Logins { get; set; } = null!;
         public virtual DbSet<Transaction> Transactions { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
 
-//        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//        {
-//            if (!optionsBuilder.IsConfigured)
-//            {
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-//                optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=Banque;User Id=postgres;Password=root");
-//            }
-//        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=Banque;User Id=postgres;Password=root");
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -49,13 +50,9 @@ namespace BanqueBack.Models
 
                 entity.Property(e => e.Agenceid).HasColumnName("agenceid");
 
-                entity.Property(e => e.Datecloture)
-                    .HasColumnType("timestamp with time zone")
-                    .HasColumnName("datecloture");
+                entity.Property(e => e.Datecloture).HasColumnName("datecloture");
 
-                entity.Property(e => e.Datecreation)
-                    .HasColumnType("timestamp with time zone")
-                    .HasColumnName("datecreation");
+                entity.Property(e => e.Datecreation).HasColumnName("datecreation");
 
                 entity.Property(e => e.Numaccount)
                     .HasMaxLength(50)
@@ -104,6 +101,30 @@ namespace BanqueBack.Models
                     .HasColumnName("ville");
             });
 
+            modelBuilder.Entity<Login>(entity =>
+            {
+                entity.ToTable("Login");
+
+                entity.HasIndex(e => e.Email, "AK1_Login_Login")
+                    .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.Email)
+                    .HasMaxLength(50)
+                    .HasColumnName("email");
+
+                entity.Property(e => e.Motdepasse)
+                    .HasMaxLength(50)
+                    .HasColumnName("motdepasse");
+
+                entity.Property(e => e.Role)
+                    .HasMaxLength(50)
+                    .HasColumnName("role");
+            });
+
             modelBuilder.Entity<Transaction>(entity =>
             {
                 entity.ToTable("Transaction");
@@ -116,9 +137,7 @@ namespace BanqueBack.Models
 
                 entity.Property(e => e.Accountid).HasColumnName("accountid");
 
-                entity.Property(e => e.Date)
-                    .HasColumnType("timestamp with time zone")
-                    .HasColumnName("date");
+                entity.Property(e => e.Date).HasColumnName("date");
 
                 entity.Property(e => e.Description)
                     .HasMaxLength(50)
@@ -143,7 +162,8 @@ namespace BanqueBack.Models
             {
                 entity.ToTable("User");
 
-                entity.HasIndex(e => e.Nom, "ak1_customer_customername");
+                entity.HasIndex(e => e.Email, "email")
+                    .IsUnique();
 
                 entity.Property(e => e.Userid)
                     .HasColumnName("userid")
@@ -157,9 +177,7 @@ namespace BanqueBack.Models
                     .HasMaxLength(50)
                     .HasColumnName("cp");
 
-                entity.Property(e => e.Datenaissance)
-                    .HasColumnType("timestamp with time zone")
-                    .HasColumnName("datenaissance");
+                entity.Property(e => e.Datenaissance).HasColumnName("datenaissance");
 
                 entity.Property(e => e.Email)
                     .HasMaxLength(50)
