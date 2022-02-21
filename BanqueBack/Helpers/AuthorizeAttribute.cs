@@ -19,7 +19,7 @@ namespace BanqueBack.Helpers
         public void OnAuthorization(AuthorizationFilterContext context)
         {
 
-            var task = (Task<ActionResult<User>>)context.HttpContext.Items["User"];
+            var task = (Task<ActionResult<Login>>)context.HttpContext.Items["User"];
             var user = task.Result.Value;
 
             if (user == null || (_roles.Any() && !_roles.Contains(user.Role)))

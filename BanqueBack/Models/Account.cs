@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace BanqueBack.Models
 {
@@ -19,6 +20,8 @@ namespace BanqueBack.Models
         public DateTimeOffset? Datecloture { get; set; }
 
         public virtual Agence? Agence { get; set; } = null!;
+
+        [JsonIgnore]
         public virtual User? User { get; set; } = null!;
         public virtual ICollection<Transaction>? Transactions { get; set; }
     }

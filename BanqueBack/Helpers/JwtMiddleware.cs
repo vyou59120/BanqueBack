@@ -60,6 +60,8 @@ namespace BanqueBack.Helpers
               
                     
                     string idUser = TokenInfo["id"];
+                    
+                    
                     context.Items["User"] = _context.Users.FindAsync(Int32.Parse(idUser));
                 }               
             }
