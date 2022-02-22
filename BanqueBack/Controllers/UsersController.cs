@@ -100,6 +100,23 @@ namespace BanqueBack.Controllers
             return NoContent();
         }
 
+        // GET: api/UsersAccount
+        //public async Task<ActionResult<IEnumerable<User>>> GetUserAccount()
+        [HttpGet("User_Account/{id}")]
+        public async Task<ActionResult<User>> GetUserAccount()
+        {
+            List<User> users = await _context.Users.ToListAsync();
+            List<Account> accounts = await _context.Accounts.ToListAsync();
+            var query = from  account in accounts 
+                        join user in users
+                        on account.Userid
+                        equals user.Userid 
+                        select new { AccountOwner = account.User };
+            //Exclude duplicates.
+            var Q = query.Distinct().ToList();
+            return Ok(Q);
+        }
+
         private bool UserExists(int id)
         {
             return _context.Users.Any(e => e.Userid == id);
