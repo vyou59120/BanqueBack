@@ -1,5 +1,6 @@
 using BanqueBack.Helpers;
 using BanqueBack.Models;
+using BanqueBack.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -19,6 +20,7 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
                                      .AllowAnyMethod();
           });
     });
+    services.AddScoped<IUserService, UserService>();
     services.AddControllers().AddJsonOptions(x =>
     {
         // serialize enums as strings in api responses (e.g. Role)
