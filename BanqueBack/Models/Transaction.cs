@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace BanqueBack.Models
 {
@@ -12,6 +13,7 @@ namespace BanqueBack.Models
         public string? Operation { get; set; } = null!;
         public string? Description { get; set; } = null!;
 
+        [JsonIgnore]
         public virtual Account? Account { get; set; } = null!;
     }
 }

@@ -26,21 +26,20 @@ namespace BanqueBack.Controllers
             _context = context;
         }
 
-        [HttpPost("authenticate")]
-        public AuthenticateResponse Authenticate(AuthenticateRequest model)
-        {
-            var user = _context.Users.SingleOrDefault(x => x.Email == model.Email && x.Motdepasse == Common.Secure.Encrypteur(model.Motdepasse));
+        //[HttpPost("authenticate")]
+        //public AuthenticateResponse Authenticate(AuthenticateRequest model)
+        //{
+        //    var user = _context.Users.SingleOrDefault(x => x.Email == model.Email && x.Motdepasse == Common.Secure.Encrypteur(model.Motdepasse));
 
-            if (user == null) return null;
+        //    if (user == null) return null;
 
-            var token = generateJwtToken(user);
+        //    var token = generateJwtToken(user);
 
-            return new AuthenticateResponse(user, token);
-        }
+        //    return new AuthenticateResponse(user, token);
+        //}
 
         // GET: api/Users
         [HttpGet]
-        [Authorize("ADMIN", "COMMERCIAL")]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             return await _context.Users.ToListAsync();
@@ -67,11 +66,9 @@ namespace BanqueBack.Controllers
 
             if (user == null) return null;
 
-            var token = generateJwtToken(user);
+            //var token = generateJwtToken(user);
 
-            Console.WriteLine(user.Nom);
-
-            return new AuthenticateResponse(user, token);
+            return new AuthenticateResponse(user.Userid,user.Nom, user.Prenom, user.Adresse, user.Cp,user.Ville, user.Email, "CLIENT", user.Datenaissance);
         }
 
         [HttpGet("{id}/accounts")]
@@ -80,6 +77,7 @@ namespace BanqueBack.Controllers
             var user = await _context.Users
                        .Where(s => s.Userid == id)
                        .Include(s => s.Accounts)
+                       .ThenInclude(s => s.Transactions.OrderByDescending(o => o.Date))
                        .ToListAsync();
 
             if (user == null)
@@ -89,6 +87,25 @@ namespace BanqueBack.Controllers
 
             return user;
         }
+
+        //[HttpGet("{id}/accounts222")]
+        //public async Task<AccountUser> GetUserAccounts2222(int id)
+        //{
+        //    var query = from user in _context.Users
+        //                join account in _context.Accounts
+        //                on user equals account.User
+        //                where user.Userid == id
+        //                select new AccountUser
+        //                {
+        //                    User = user,
+        //                    Accounts = user.Accounts
+        //                };
+
+        //    AccountUser monuser = query.FirstOrDefault();
+         
+        //    return monuser;
+        //}
+
 
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -160,8 +177,11 @@ namespace BanqueBack.Controllers
             var key = Encoding.ASCII.GetBytes("blablavlkfdqjlkvndsjkfnbsdlkbnlkdqfnfbkjnslkdvnkjdqnkbjndsfkj");
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] { new Claim("id", user.Userid.ToString()) }),
-                Expires = DateTime.UtcNow.AddDays(7),
+                Subject = new ClaimsIdentity(new[] { 
+                    new Claim("id", user.Userid.ToString()),
+                    new Claim("role", "CLIENT")
+                }),
+                Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);

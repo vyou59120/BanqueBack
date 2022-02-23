@@ -1,4 +1,7 @@
 ﻿using BanqueBack.Models;
+using BanqueBack.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -16,20 +19,19 @@ namespace BanqueBack.Helpers
         public JwtMiddleware(RequestDelegate next)
         {
             _next = next;
-            
         }
 
-        public async Task Invoke(HttpContext context)
+        public async Task Invoke(HttpContext context, IUserService userService)
         {
             var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
             if (token != null)
-                attachUserToContext(context, token);
+                attachUserToContext(context, token, userService);
 
             await _next(context);
         }
 
-        private void attachUserToContext(HttpContext context, string token)
+        private void attachUserToContext(HttpContext context, string token, IUserService userService)
         {
             try
             {
@@ -57,12 +59,28 @@ namespace BanqueBack.Helpers
                     {
                         TokenInfo.Add(claim.Type, claim.Value);
                     }
-              
-                    
+                                  
                     string idUser = TokenInfo["id"];
-                    
-                    
-                    context.Items["User"] = _context.Users.FindAsync(Int32.Parse(idUser));
+                    string role = TokenInfo["role"];
+
+                    context.Items["User"] = userService.GetLoginById(Int32.Parse(idUser));
+
+                    //switch (role)
+                    //{
+                    //    case "CLIENT":
+                    //        context.Items["User"] = userService.GetClientById(Int32.Parse(idUser));
+                    //        break;
+                    //    case "ADMIN":
+                    //        context.Items["User"] = userService.GetDirecteurById(Int32.Parse(idUser));
+                    //        break;
+                    //    case "STAFF":
+                    //        context.Items["User"] = userService.GetCommercialById(Int32.Parse(idUser));
+                    //        break;
+                    //    default:
+                    //        context.Items["User"] = null;
+                    //        break;
+                    //}
+
                 }               
             }
             catch
@@ -86,6 +104,25 @@ namespace BanqueBack.Helpers
                 Console.WriteLine(ex.Message);
                 return false;
             }
+        }
+
+        public async Task<ActionResult<User>> GetById(int id)
+        {
+
+            if (id == null)
+            {
+                return null;
+            }
+
+            var user = await _context.Users
+                .FirstOrDefaultAsync(m => m.Userid == id);
+            if (user == null)
+            {
+                return null;
+            }
+
+            return user;
+
         }
     }
 }
