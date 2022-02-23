@@ -129,12 +129,13 @@ namespace BanqueBack.Controllers
             return accounts;
         }
 
-        [HttpGet("byMonth")]
-        public async Task<ActionResult<IEnumerable<Couple>>> GetTransactionsByMonth()
+        [HttpGet("byMonth/{accountID}")]
+        public async Task<ActionResult<IEnumerable<Couple>>> GetTransactionsByMonth(int accountID)
         {
 
             var grouped = await (from p in _context.Transactions
-                                 .Where(p => p.Date < DateTime.Now)                   
+                                 .Where(p => p.Accountid == accountID)
+                                 .Where(p => p.Date < DateTime.Now)
                                  .Where(p => p.Date.Value.AddMonths(6) > DateTime.Now)
                                  group p by new { ope = p.Operation, month = p.Date.Value.Month }
                                  into grp
@@ -150,10 +151,11 @@ namespace BanqueBack.Controllers
             return grouped;
         }
 
-        [HttpGet("byCredit")]
-        public async Task<ActionResult<IEnumerable<Result>>> GetTransactionsByCredit()
+        [HttpGet("byCredit/{accountID}")]
+        public async Task<ActionResult<IEnumerable<Result>>> GetTransactionsByCredit(int accountID)
         {
             var accounts = await _context.Transactions
+                                      .Where(p => p.Accountid == accountID)
                                       .Where(s => s.Operation == "credit")
                                       .Where(p => p.Date < DateTime.Now)
                                       .Where(p => p.Date.Value.AddMonths(6) > DateTime.Now)
@@ -165,10 +167,11 @@ namespace BanqueBack.Controllers
             return accounts;
         }
 
-        [HttpGet("byDebit")]
-        public async Task<ActionResult<IEnumerable<Result>>> GetTransactionsByDebit()
+        [HttpGet("byDebit/{accountID}")]
+        public async Task<ActionResult<IEnumerable<Result>>> GetTransactionsByDebit(int accountID)
         {
             var accounts = await _context.Transactions
+                                      .Where(p => p.Accountid == accountID)
                                       .Where(s => s.Operation == "debit")
                                       .Where(p => p.Date < DateTime.Now)
                                       .Where(p => p.Date.Value.AddMonths(6) > DateTime.Now)
