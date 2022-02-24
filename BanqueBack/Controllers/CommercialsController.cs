@@ -28,6 +28,7 @@ namespace BanqueBack.Controllers
 
         // GET: api/Commercials
         [HttpGet]
+        [Authorize("ADMIN")]
         public async Task<ActionResult<IEnumerable<Commercial>>> GetCommercial()
         {
             return await _context.Commercials.ToListAsync();
@@ -35,6 +36,7 @@ namespace BanqueBack.Controllers
 
         // GET: api/Commercials/5
         [HttpGet("{id}")]
+        [Authorize("ADMIN")]
         public async Task<ActionResult<Commercial>> GetCommercial(int id)
         {
             var commercial = await _context.Commercials.FindAsync(id);
@@ -64,6 +66,7 @@ namespace BanqueBack.Controllers
         // PUT: api/Commercials/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize("STAFF", "ADMIN")]
         public async Task<IActionResult> PutCommercial(int id, Commercial commercial)
         {
             if (id != commercial.commercialid)
@@ -105,6 +108,7 @@ namespace BanqueBack.Controllers
 
         // DELETE: api/Commercials/5
         [HttpDelete("{id}")]
+        [Authorize("ADMIN")]
         public async Task<IActionResult> DeleteCommercial(int id)
         {
             var commercial = await _context.Commercials.FindAsync(id);

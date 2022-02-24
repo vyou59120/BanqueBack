@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BanqueBack.Models;
+using BanqueBack.Helpers;
 
 namespace BanqueBack.Controllers
 {
@@ -23,6 +24,7 @@ namespace BanqueBack.Controllers
 
         // GET: api/Transactions
         [HttpGet]
+        [Authorize("CLIENT", "STAFF", "ADMIN")]
         public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactions()
         {
             return await _context.Transactions
@@ -32,6 +34,7 @@ namespace BanqueBack.Controllers
 
         // GET: api/Transactions/5
         [HttpGet("{id}")]
+        [Authorize("CLIENT", "STAFF", "ADMIN")]
         public async Task<ActionResult<Transaction>> GetTransaction(int id)
         {
             var transaction = await _context.Transactions.FindAsync(id);
@@ -47,6 +50,7 @@ namespace BanqueBack.Controllers
         // PUT: api/Transactions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize("CLIENT", "STAFF", "ADMIN")]
         public async Task<IActionResult> PutTransaction(int id, Transaction transaction)
         {
             if (id != transaction.Transactionid)
@@ -78,6 +82,7 @@ namespace BanqueBack.Controllers
         // POST: api/Transactions
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize("CLIENT", "STAFF", "ADMIN")]
         public async Task<ActionResult<Transaction>> PostTransaction(Transaction transaction)
         {
             _context.Transactions.Add(transaction);
@@ -88,6 +93,7 @@ namespace BanqueBack.Controllers
 
         // DELETE: api/Transactions/5
         [HttpDelete("{id}")]
+        [Authorize("ADMIN")]
         public async Task<IActionResult> DeleteTransaction(int id)
         {
             var transaction = await _context.Transactions.FindAsync(id);
@@ -103,6 +109,7 @@ namespace BanqueBack.Controllers
         }
 
         [HttpGet("bydates/{date1}/{date2}")]
+        [Authorize("CLIENT", "STAFF", "ADMIN")]
         public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactionsByDates(DateTime date1, DateTime date2)
         {
             //var numAccount = 4;
@@ -119,6 +126,7 @@ namespace BanqueBack.Controllers
         }
 
         [HttpGet("byType/{type}")]
+        [Authorize("CLIENT", "STAFF", "ADMIN")]
         public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactionsByOperation(string type)
         {
             var accounts = await _context.Transactions
@@ -130,6 +138,7 @@ namespace BanqueBack.Controllers
         }
 
         [HttpGet("byMonth/{accountID}")]
+        [Authorize("CLIENT", "STAFF", "ADMIN")]
         public async Task<ActionResult<IEnumerable<Couple>>> GetTransactionsByMonth(int accountID)
         {
 
@@ -152,6 +161,7 @@ namespace BanqueBack.Controllers
         }
 
         [HttpGet("byCredit/{accountID}")]
+        [Authorize("CLIENT", "STAFF", "ADMIN")]
         public async Task<ActionResult<IEnumerable<Result>>> GetTransactionsByCredit(int accountID)
         {
             var accounts = await _context.Transactions
@@ -168,6 +178,7 @@ namespace BanqueBack.Controllers
         }
 
         [HttpGet("byDebit/{accountID}")]
+        [Authorize("CLIENT", "STAFF", "ADMIN")]
         public async Task<ActionResult<IEnumerable<Result>>> GetTransactionsByDebit(int accountID)
         {
             var accounts = await _context.Transactions

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BanqueBack.Models;
+using BanqueBack.Helpers;
 
 namespace BanqueBack.Controllers
 {
@@ -23,6 +24,7 @@ namespace BanqueBack.Controllers
 
         // GET: api/Accounts
         [HttpGet]
+        [Authorize("CLIENT", "STAFF", "ADMIN")]
         public async Task<ActionResult<IEnumerable<Account>>> GetAccounts()
         {
             return await _context.Accounts.ToListAsync();
@@ -30,6 +32,7 @@ namespace BanqueBack.Controllers
 
         // GET: api/Accounts/5
         [HttpGet("{id}")]
+        [Authorize("CLIENT", "STAFF", "ADMIN")]
         public async Task<ActionResult<Account>> GetAccount(int id)
         {
             var account = await _context.Accounts.FindAsync(id);
@@ -45,6 +48,7 @@ namespace BanqueBack.Controllers
         // PUT: api/Accounts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize("STAFF", "ADMIN")]
         public async Task<IActionResult> PutAccount(int id, Account account)
         {
             if (id != account.Accountid)
@@ -76,6 +80,7 @@ namespace BanqueBack.Controllers
         // POST: api/Accounts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize("STAFF", "ADMIN")]
         public async Task<ActionResult<Account>> PostAccount(Account account)
         {
             _context.Accounts.Add(account);
@@ -86,6 +91,7 @@ namespace BanqueBack.Controllers
 
         // DELETE: api/Accounts/5
         [HttpDelete("{id}")]
+        [Authorize("ADMIN")]
         public async Task<IActionResult> DeleteAccount(int id)
         {
             var account = await _context.Accounts.FindAsync(id);

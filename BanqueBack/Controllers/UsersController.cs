@@ -40,6 +40,7 @@ namespace BanqueBack.Controllers
 
         // GET: api/Users
         [HttpGet]
+        [Authorize("CLIENT", "STAFF", "ADMIN")]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             return await _context.Users.ToListAsync();
@@ -47,6 +48,7 @@ namespace BanqueBack.Controllers
 
         // GET: api/Users/5
         [HttpGet("{id}")]
+        [Authorize("CLIENT", "STAFF", "ADMIN")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
             var user = await _context.Users.FindAsync(id);
@@ -73,6 +75,7 @@ namespace BanqueBack.Controllers
         }
 
         [HttpGet("{id}/accounts")]
+        [Authorize("CLIENT","STAFF","ADMIN")]
         public async Task<ActionResult<IEnumerable<User>>> GetUserAccounts(int id)
         {
             var user = await _context.Users
@@ -111,6 +114,7 @@ namespace BanqueBack.Controllers
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize("CLIENT", "STAFF", "ADMIN")]
         public async Task<IActionResult> PutUser(int id, User user)
         {
             if (id != user.Userid)
@@ -144,6 +148,7 @@ namespace BanqueBack.Controllers
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize("CLIENT", "STAFF", "ADMIN")]
         public async Task<ActionResult<User>> PostUser(User user)
         {
             User temp = new User(user.Nom, user.Prenom, user.Adresse, user.Cp, user.Ville, user.Email, user.Role, user.Datenaissance);
@@ -156,6 +161,7 @@ namespace BanqueBack.Controllers
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
+        [Authorize("ADMIN")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             var user = await _context.Users.FindAsync(id);

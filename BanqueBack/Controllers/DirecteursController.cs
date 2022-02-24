@@ -28,6 +28,7 @@ namespace BanqueBack.Controllers
 
         // GET: api/Directeurs
         [HttpGet]
+        [Authorize("ADMIN")]
         public async Task<ActionResult<IEnumerable<Directeur>>> GetDirecteur()
         {
             return await _context.Directeur.ToListAsync();
@@ -35,6 +36,7 @@ namespace BanqueBack.Controllers
 
         // GET: api/Directeurs/5
         [HttpGet("{id}")]
+        [Authorize("ADMIN")]
         public async Task<ActionResult<Directeur>> GetDirecteur(int id)
         {
             var directeur = await _context.Directeur.FindAsync(id);
@@ -65,6 +67,7 @@ namespace BanqueBack.Controllers
         // PUT: api/Directeurs/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize("ADMIN")]
         public async Task<IActionResult> PutDirecteur(int id, Directeur directeur)
         {
             if (id != directeur.directeurid)
@@ -106,6 +109,7 @@ namespace BanqueBack.Controllers
 
         // DELETE: api/Directeurs/5
         [HttpDelete("{id}")]
+        [Authorize("ADMIN")]
         public async Task<IActionResult> DeleteDirecteur(int id)
         {
             var directeur = await _context.Directeur.FindAsync(id);
