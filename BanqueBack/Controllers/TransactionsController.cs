@@ -25,7 +25,9 @@ namespace BanqueBack.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactions()
         {
-            return await _context.Transactions.ToListAsync();
+            return await _context.Transactions
+                .OrderByDescending(s => s.Date)
+                .ToListAsync();
         }
 
         // GET: api/Transactions/5
@@ -127,24 +129,52 @@ namespace BanqueBack.Controllers
             return accounts;
         }
 
-        [HttpGet("byCredit")]
-        public async Task<ActionResult<IEnumerable<Result>>> GetTransactionsByCredit()
+        [HttpGet("byMonth/{accountID}")]
+        public async Task<ActionResult<IEnumerable<Couple>>> GetTransactionsByMonth(int accountID)
+        {
+
+            var grouped = await (from p in _context.Transactions
+                                 .Where(p => p.Accountid == accountID)
+                                 .Where(p => p.Date < DateTime.Now)
+                                 .Where(p => p.Date.Value.AddMonths(6) > DateTime.Now)
+                                 group p by new { ope = p.Operation, month = p.Date.Value.Month }
+                                 into grp
+                                 select new Couple
+                                 {
+                                     Operation = grp.Key.ope,
+                                     Month = grp.Key.month,
+                                     Montant = grp.Sum(t => t.Montant)
+                                 })
+                                 .OrderByDescending(x => x.Month)
+                                 .ToListAsync();
+
+            return grouped;
+        }
+
+        [HttpGet("byCredit/{accountID}")]
+        public async Task<ActionResult<IEnumerable<Result>>> GetTransactionsByCredit(int accountID)
         {
             var accounts = await _context.Transactions
+                                      .Where(p => p.Accountid == accountID)
                                       .Where(s => s.Operation == "credit")
-                                      .GroupBy(x => x.Description)                                  
-                                      .Select(x => new Result { Amount = x.Sum(b => b.Montant), Name = x.Key })
+                                      .Where(p => p.Date < DateTime.Now)
+                                      .Where(p => p.Date.Value.AddMonths(6) > DateTime.Now)
+                                      .GroupBy(x => x.Description)
+                                      .Select(y => new Result { Amount = y.Sum(b => b.Montant), Name = y.Key })
                                       .OrderByDescending(x => x.Amount)
                                       .ToListAsync();
 
             return accounts;
         }
 
-        [HttpGet("byDebit")]
-        public async Task<ActionResult<IEnumerable<Result>>> GetTransactionsByDebit()
+        [HttpGet("byDebit/{accountID}")]
+        public async Task<ActionResult<IEnumerable<Result>>> GetTransactionsByDebit(int accountID)
         {
             var accounts = await _context.Transactions
+                                      .Where(p => p.Accountid == accountID)
                                       .Where(s => s.Operation == "debit")
+                                      .Where(p => p.Date < DateTime.Now)
+                                      .Where(p => p.Date.Value.AddMonths(6) > DateTime.Now)
                                       .GroupBy(x => x.Description)
                                       .Select(x => new Result { Amount = x.Sum(b => b.Montant), Name = x.Key })
                                       .OrderByDescending(x => x.Amount)
@@ -152,6 +182,7 @@ namespace BanqueBack.Controllers
 
             return accounts;
         }
+
 
         private bool TransactionExists(int id)
         {

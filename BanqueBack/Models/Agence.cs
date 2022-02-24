@@ -10,8 +10,7 @@ namespace BanqueBack.Models
             Accounts = new HashSet<Account>();
         }
 
-        public int Agenceid { get; set; }
-        public string? Nomagence { get; set; } = null!;
+        public int Agenceid { get; set; }        public string? Nomagence { get; set; } = null!;
         public string? Phone { get; set; }
         public string? Ville { get; set; } = null!;
 

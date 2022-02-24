@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using BanqueBack.Models;
 
 namespace BanqueBack.Models
 {
@@ -18,17 +19,19 @@ namespace BanqueBack.Models
 
         public virtual DbSet<Account> Accounts { get; set; } = null!;
         public virtual DbSet<Agence> Agences { get; set; } = null!;
+        public virtual DbSet<Login> Logins { get; set; } = null!;
         public virtual DbSet<Transaction> Transactions { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
+        public DbSet<BanqueBack.Models.Commercial> Commercials { get; set; }
 
-//        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//        {
-//            if (!optionsBuilder.IsConfigured)
-//            {
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-//                optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=Banque;User Id=postgres;Password=root");
-//            }
-//        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=Banque;User Id=postgres;Password=root");
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -49,13 +52,9 @@ namespace BanqueBack.Models
 
                 entity.Property(e => e.Agenceid).HasColumnName("agenceid");
 
-                entity.Property(e => e.Datecloture)
-                    .HasColumnType("timestamp with time zone")
-                    .HasColumnName("datecloture");
+                entity.Property(e => e.Datecloture).HasColumnName("datecloture");
 
-                entity.Property(e => e.Datecreation)
-                    .HasColumnType("timestamp with time zone")
-                    .HasColumnName("datecreation");
+                entity.Property(e => e.Datecreation).HasColumnName("datecreation");
 
                 entity.Property(e => e.Numaccount)
                     .HasMaxLength(50)
@@ -104,6 +103,30 @@ namespace BanqueBack.Models
                     .HasColumnName("ville");
             });
 
+            modelBuilder.Entity<Login>(entity =>
+            {
+                entity.ToTable("Login");
+
+                entity.HasIndex(e => e.Email, "AK1_Login_Login")
+                    .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.Email)
+                    .HasMaxLength(50)
+                    .HasColumnName("email");
+
+                entity.Property(e => e.Motdepasse)
+                    .HasMaxLength(50)
+                    .HasColumnName("motdepasse");
+
+                entity.Property(e => e.Role)
+                    .HasMaxLength(50)
+                    .HasColumnName("role");
+            });
+
             modelBuilder.Entity<Transaction>(entity =>
             {
                 entity.ToTable("Transaction");
@@ -116,9 +139,7 @@ namespace BanqueBack.Models
 
                 entity.Property(e => e.Accountid).HasColumnName("accountid");
 
-                entity.Property(e => e.Date)
-                    .HasColumnType("timestamp with time zone")
-                    .HasColumnName("date");
+                entity.Property(e => e.Date).HasColumnName("date");
 
                 entity.Property(e => e.Description)
                     .HasMaxLength(50)
@@ -143,7 +164,7 @@ namespace BanqueBack.Models
             {
                 entity.ToTable("User");
 
-                entity.HasIndex(e => e.Nom, "ak1_customer_customername")
+                entity.HasIndex(e => e.Email, "email")
                     .IsUnique();
 
                 entity.Property(e => e.Userid)
@@ -158,9 +179,7 @@ namespace BanqueBack.Models
                     .HasMaxLength(50)
                     .HasColumnName("cp");
 
-                entity.Property(e => e.Datenaissance)
-                    .HasColumnType("timestamp with time zone")
-                    .HasColumnName("datenaissance");
+                entity.Property(e => e.Datenaissance).HasColumnName("datenaissance");
 
                 entity.Property(e => e.Email)
                     .HasMaxLength(50)
@@ -187,9 +206,95 @@ namespace BanqueBack.Models
                     .HasColumnName("ville");
             });
 
+            modelBuilder.Entity<Commercial>(entity =>
+            {
+                entity.ToTable("Commercial");
+
+                entity.HasIndex(e => e.Nom, "ak1_commercial_commercialname")
+                    .IsUnique();
+
+                entity.Property(e => e.commercialid)
+                    .HasColumnName("commercialid")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.Adresse)
+                    .HasMaxLength(50)
+                    .HasColumnName("adresse");
+
+                entity.Property(e => e.Cp)
+                    .HasMaxLength(50)
+                    .HasColumnName("cp");
+
+                entity.Property(e => e.Datenaissance)
+                    .HasColumnType("timestamp with time zone")
+                    .HasColumnName("datenaissance");
+
+                entity.Property(e => e.Email)
+                    .HasMaxLength(50)
+                    .HasColumnName("email");
+
+
+                entity.Property(e => e.Nom)
+                    .HasMaxLength(50)
+                    .HasColumnName("nom");
+
+                entity.Property(e => e.Prenom)
+                    .HasMaxLength(50)
+                    .HasColumnName("prenom");
+
+                entity.Property(e => e.Ville)
+                    .HasMaxLength(50)
+                    .HasColumnName("ville");
+            });
+
+            modelBuilder.Entity<Directeur>(entity =>
+            {
+                entity.ToTable("Directeur");
+
+                entity.HasIndex(e => e.Nom, "ak1_directeur_directeurname")
+                    .IsUnique();
+
+                entity.Property(e => e.directeurid)
+                    .HasColumnName("directeurid")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.Adresse)
+                    .HasMaxLength(50)
+                    .HasColumnName("adresse");
+
+                entity.Property(e => e.Cp)
+                    .HasMaxLength(50)
+                    .HasColumnName("cp");
+
+                entity.Property(e => e.Datenaissance)
+                    .HasColumnType("timestamp with time zone")
+                    .HasColumnName("datenaissance");
+
+                entity.Property(e => e.Email)
+                    .HasMaxLength(50)
+                    .HasColumnName("email");
+
+
+                entity.Property(e => e.Nom)
+                    .HasMaxLength(50)
+                    .HasColumnName("nom");
+
+                entity.Property(e => e.Prenom)
+                    .HasMaxLength(50)
+                    .HasColumnName("prenom");
+
+                entity.Property(e => e.Ville)
+                    .HasMaxLength(50)
+                    .HasColumnName("ville");
+            });
+
             OnModelCreatingPartial(modelBuilder);
         }
 
+
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+
+        public DbSet<BanqueBack.Models.Directeur> Directeur { get; set; }
     }
 }
