@@ -64,7 +64,8 @@ namespace BanqueBack.Controllers
         {
             var user = _context.Users.SingleOrDefault(x => x.Email == email);
 
-            if (user == null) return null;
+            if (user == null) 
+                return new AuthenticateResponse(0, "", "", "", "", "", "", "", new DateTime());
 
             //var token = generateJwtToken(user);
 

@@ -52,7 +52,8 @@ namespace BanqueBack.Controllers
         {
             var directeur = _context.Directeur.SingleOrDefault(x => x.Email == email);
 
-            if (directeur == null) return null;
+            if (directeur == null)
+                return new AuthenticateResponse(0, "", "", "", "", "", "", "", new DateTime());
 
             //var token = generateJwtToken(directeur);
 

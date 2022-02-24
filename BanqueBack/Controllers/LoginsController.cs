@@ -83,7 +83,7 @@ namespace BanqueBack.Controllers
         {
             var login = _context.Logins.SingleOrDefault(x => x.Email == model.Email && x.Motdepasse == Common.Secure.Encrypteur(model.Motdepasse));
             if (login == null)
-                return null;
+                return new LoginResponse(0, "", "", "");
                 //return CreatedAtAction("PostLogin", new { id = 0, email = "" });
 
             var token = generateJwtToken(login);
