@@ -40,7 +40,6 @@ namespace BanqueBack.Models
             Motdepasse = motdepasse;
             Role = role;
             Datenaissance = datenaissance;
-
         }
     }
 }

@@ -22,7 +22,9 @@ namespace BanqueBack.Models
         public virtual DbSet<Login> Logins { get; set; } = null!;
         public virtual DbSet<Transaction> Transactions { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
+        public virtual DbSet<Directeur> Directeurs{ get; set; } = null!;
         public DbSet<BanqueBack.Models.Commercial> Commercials { get; set; }
+        public virtual DbSet<Manager> Managers{ get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -256,6 +258,47 @@ namespace BanqueBack.Models
 
                 entity.Property(e => e.directeurid)
                     .HasColumnName("directeurid")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.Adresse)
+                    .HasMaxLength(50)
+                    .HasColumnName("adresse");
+
+                entity.Property(e => e.Cp)
+                    .HasMaxLength(50)
+                    .HasColumnName("cp");
+
+                entity.Property(e => e.Datenaissance)
+                    .HasColumnType("timestamp with time zone")
+                    .HasColumnName("datenaissance");
+
+                entity.Property(e => e.Email)
+                    .HasMaxLength(50)
+                    .HasColumnName("email");
+
+
+                entity.Property(e => e.Nom)
+                    .HasMaxLength(50)
+                    .HasColumnName("nom");
+
+                entity.Property(e => e.Prenom)
+                    .HasMaxLength(50)
+                    .HasColumnName("prenom");
+
+                entity.Property(e => e.Ville)
+                    .HasMaxLength(50)
+                    .HasColumnName("ville");
+            });
+
+            modelBuilder.Entity<Manager>(entity =>
+            {
+                entity.ToTable("Manager");
+
+                entity.HasIndex(e => e.Nom, "ak1_manager_managername")
+                    .IsUnique();
+
+                entity.Property(e => e.managerid)
+                    .HasColumnName("managerid")
                     .UseIdentityAlwaysColumn();
 
                 entity.Property(e => e.Adresse)
