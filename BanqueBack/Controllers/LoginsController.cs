@@ -50,6 +50,7 @@ namespace BanqueBack.Controllers
         // PUT: api/Logins/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize("CLIENT,STAFF,ADMIN")]
         public async Task<IActionResult> PutLogin(int id, Login login)
         {
             if (id != login.Id)
@@ -122,6 +123,7 @@ namespace BanqueBack.Controllers
 
         // DELETE: api/Logins/5
         [HttpDelete("{id}")]
+        [Authorize("ADMIN")]
         public async Task<IActionResult> DeleteLogin(int id)
         {
             var login = await _context.Logins.FindAsync(id);

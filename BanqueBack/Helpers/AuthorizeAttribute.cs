@@ -24,11 +24,16 @@ namespace BanqueBack.Helpers
 
             var task = (Task<ActionResult<Login>>)context.HttpContext.Items["User"];
             var login = task.Result.Value;
-
+            Console.WriteLine(login.Role);
+            foreach (string rolee in _roles)
+            {
+                Console.WriteLine(rolee);
+            }
+            Console.WriteLine(_roles.Contains(login.Role));
             if (login == null || (_roles.Any() && !_roles.Contains(login.Role)))
             {
                 // not logged in
-                //context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
+                context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
             }
 
             //if (user == null || (_roles.Any() && !_roles.Contains(user.Role)))
