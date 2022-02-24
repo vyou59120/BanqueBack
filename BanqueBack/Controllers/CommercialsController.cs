@@ -52,7 +52,8 @@ namespace BanqueBack.Controllers
         {
             var commercial = _context.Commercials.SingleOrDefault(x => x.Email == email);
 
-            if (commercial == null) return null;
+            if (commercial == null) 
+                return new AuthenticateResponse(0, "", "", "", "", "", "", "", new DateTime());
 
             //var token = generateJwtToken(commercial);
 
