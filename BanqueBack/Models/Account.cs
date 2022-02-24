@@ -15,9 +15,9 @@ namespace BanqueBack.Models
         public string? Numaccount { get; set; }
         public int Agenceid { get; set; }
         public int Userid { get; set; }
-        public DateTimeOffset? Datecreation { get; set; }
+        public DateTime? Datecreation { get; set; }
         public decimal? Solde { get; set; }
-        public DateTimeOffset? Datecloture { get; set; }
+        public DateTime? Datecloture { get; set; }
 
         public virtual Agence? Agence { get; set; } = null!;
 

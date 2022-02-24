@@ -145,12 +145,12 @@ namespace BanqueBack.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
-            User temp = new User(user.Userid, user.Nom, user.Prenom, user.Adresse, user.Cp, user.Ville, user.Email, Common.Secure.Encrypteur(user.Motdepasse), user.Role, user.Datenaissance);
+            User temp = new User(user.Nom, user.Prenom, user.Adresse, user.Cp, user.Ville, user.Email, user.Role, user.Datenaissance);
 
-            _context.Users.Add(temp);
+             _context.Users.Add(temp);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUser", new { id = user.Userid }, user);
+            return CreatedAtAction("GetUser", new { id = temp.Userid }, temp);
         }
 
         // DELETE: api/Users/5

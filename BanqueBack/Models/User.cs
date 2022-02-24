@@ -42,5 +42,21 @@ namespace BanqueBack.Models
             Datenaissance = datenaissance;
 
         }
+
+        public User(string nom, string prenom, string adresse,
+            string cp, string ville, string email,
+            string role, DateTime? datenaissance)
+        {
+            Nom = nom;
+            Prenom = prenom;
+            Adresse = adresse;
+            Cp = cp;
+            Ville = ville;
+            Email = email;
+            Role = role;
+            Datenaissance = datenaissance;
+
+        }
+
     }
 }
